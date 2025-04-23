@@ -153,21 +153,19 @@ archive = []
 
 # Hàm lọc các điểm trong archive
 def filter_pareto_front_using_crowding(archive, max_size=300):
-    # Hàm tính khoảng cách Euclidean giữa hai điểm
     def euclidean_distance(point1, point2):
         return np.linalg.norm(point1 - point2)
     
-    # Hàm tính crowding distance cho một front
     def crowding_distance(front):
         n = len(front)
         if n == 0:
             return np.array([])
         distances = np.zeros(n)
-        for i in range(front.shape[1]):  # Tính trên từng objective
+        for i in range(front.shape[1]):  
             sorted_idx = np.argsort(front[:, i])
             min_val = front[sorted_idx[0], i]
             max_val = front[sorted_idx[-1], i]
-            distances[sorted_idx[0]] = distances[sorted_idx[-1]] = np.inf  # biên
+            distances[sorted_idx[0]] = distances[sorted_idx[-1]] = np.inf 
             for j in range(1, n - 1):
                 distances[sorted_idx[j]] += (front[sorted_idx[j + 1], i] - front[sorted_idx[j - 1], i]) / (max_val - min_val)
         return distances
@@ -176,25 +174,21 @@ def filter_pareto_front_using_crowding(archive, max_size=300):
     filtered_archive = []
     for front in archive:
         if len(front) > max_size:
-            # Tính crowding distance và chọn những điểm có crowding distance lớn nhất
             dist = crowding_distance(front)
-            sorted_idx = np.argsort(dist)[::-1]  # Sắp xếp theo distance giảm dần
-            front = front[sorted_idx[:max_size]]  # Chọn max_size điểm có crowding distance lớn nhất
+            sorted_idx = np.argsort(dist)[::-1]  
+            front = front[sorted_idx[:max_size]] 
         filtered_archive.append(front)
     return filtered_archive
 #-----------------------------------------------------------------------------
 def limit_archive_size(archive, max_size=300):
     all_points = np.vstack(archive)
-    fitness_values = evaluation(all_points)  # Tính giá trị fitness cho các điểm trong archive
+    fitness_values = evaluation(all_points)  
 
-    # Tính crowding distance cho các điểm trong archive
     crowding_distances = crowding_calculation(fitness_values)
     
-    # Sắp xếp theo crowding distance và chọn ra top `max_size` điểm
     sorted_idx = np.argsort(crowding_distances)[::-1]
     selected_points = all_points[sorted_idx[:max_size]]
 
-    # Chia lại archive thành các front
     filtered_archive = []
     current_start = 0
     for front in archive:
@@ -214,15 +208,14 @@ for i in range(200):
     fitness_values = evaluation(pop)
     pop = selection(pop, fitness_values, pop_size)
 
-    # ✅ Lưu Pareto front hiện tại vào archive
+    # Lưu Pareto front hiện tại vào archive
     fitness_values = evaluation(pop)
     index = np.arange(pop.shape[0]).astype(int)
     pareto_front_index = pareto_front_finding(fitness_values, index)
     pareto_front = fitness_values[pareto_front_index]
     archive.append(pareto_front)
 
-    # Lọc archive sau mỗi vòng lặp
-    archive = limit_archive_size(archive, max_size=150)  # Giới hạn 300 điểm
+    archive = limit_archive_size(archive, max_size=150)  
 
     print(f"iteration {i}")
 
@@ -248,17 +241,13 @@ print(f"Tổng số điểm được tô trên đồ thị: {total_points}")
 #------------------ Vẽ Pareto front hội tụ --------------------
 plt.figure(figsize=(6, 6))
 for front in archive:
-    plt.scatter(front[:, 0], front[:, 1], s=10, color='red', marker='s')  # 's' là hình vuông
+    plt.scatter(front[:, 0], front[:, 1], s=10, color='red', marker='s') 
 
 plt.xlabel('f1(x)')
 plt.ylabel('f2(x)')
 plt.grid(True, color='black', linewidth=0.5)
 plt.title('Pareto Front')
-
-# ⚙️ Giới hạn trục
 plt.xlim(-1, 1)     
 plt.ylim(0, 20)    
-
-# Đổi nền trắng và loại bỏ viền
 plt.gca().set_facecolor('white')
 plt.show()
