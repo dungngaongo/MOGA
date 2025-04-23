@@ -178,10 +178,16 @@ print("Fitness values:")
 print("objective 1  objective 2")
 print("      |          |")
 print(fitness_values)
-plt.scatter(fitness_values[:, 0], fitness_values[:, 1])
-plt.xlabel('Objective function 1 (f1)')
-plt.ylabel('Objective function 2 (f2)')
-plt.title('Pareto Front - Kursawe Function')
-plt.xlim(-20, -14)    
-plt.ylim(-12, 2) 
+plt.scatter(fitness_values[:, 0], fitness_values[:, 1], s=10, color='red', marker='s')
+plt.xlabel('f1(x)')
+plt.ylabel('f2(x)')
+plt.grid(True, color='black', linewidth=0.5)
+plt.title('Pareto Front')
+
+# ⚙️ Giới hạn trục
+plt.xlim(-20, -14)     # Trục X từ 0 đến 4
+plt.ylim(-12, 2)     # Trục Y từ 0 đến 4
+
+# Đổi nền trắng và loại bỏ viền
+plt.gca().set_facecolor('white')
 plt.show()
