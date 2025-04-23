@@ -181,11 +181,7 @@ plt.xlabel('f1(x)')
 plt.ylabel('f2(x)')
 plt.grid(True, color='black', linewidth=0.5)
 plt.title('Pareto Front')
-
-# ⚙️ Giới hạn trục
-plt.xlim(0, 0.9)     # Trục X từ 0 đến 4
-plt.ylim(-0.8, 1)     # Trục Y từ 0 đến 4
-
-# Đổi nền trắng và loại bỏ viền
+plt.xlim(0, 0.9)     
+plt.ylim(-0.8, 1)    
 plt.gca().set_facecolor('white')
 plt.show()
