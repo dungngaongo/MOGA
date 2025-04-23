@@ -202,7 +202,7 @@ for i in range(200):
     archive.append(pareto_front)
 
     # Lọc archive sau mỗi vòng lặp
-    archive = limit_archive_size(archive, max_size=150)  # Giới hạn 300 điểm
+    archive = limit_archive_size(archive, max_size=200)  # Giới hạn 300 điểm
 
     print(f"iteration {i}")
 
