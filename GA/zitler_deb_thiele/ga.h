@@ -9,22 +9,21 @@
 #include <float.h>
 #include <string.h>
 
-#define NV 30           // Number of variables
-#define POP_SIZE 200    // Population size
-#define MAX_ITER 300    // Maximum iterations
+#define NV 30           
+#define POP_SIZE 200   
+#define MAX_ITER 300   
 #define PI 3.141592653589793
 
 typedef struct {
-    double x[NV];       // Decision variables
-    double fitness[2];  // Fitness values (2 objectives)
+    double x[NV];      
+    double fitness[2];  
 } Solution;
 
 typedef struct {
-    Solution solutions[POP_SIZE * 3]; // Population with extra space for offspring
+    Solution solutions[POP_SIZE * 3]; 
     int size;
 } Population;
 
-// Global variables (extern declarations)
 extern double lb[NV];
 extern double ub[NV];
 extern double crossover_prob;
@@ -32,12 +31,10 @@ extern double mutation_prob;
 extern int rate_local_search;
 extern double step_size;
 
-// Utility functions
 double rand01();
 double rand_range(double min, double max);
 void initialize_bounds();
 
-// Core NSGA-II functions
 void random_population(Population *pop);
 void evaluate(Solution *sol);
 void crossover(Population *pop, Population *offspring);
@@ -50,4 +47,4 @@ void select_by_crowding(Solution *solutions, int size, int num_to_select, Soluti
 void selection(Population *pop, Population *selected);
 void save_results(Population *pop, const char *filename);
 
-#endif // GA_H
+#endif 

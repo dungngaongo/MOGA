@@ -1,6 +1,5 @@
 #include "ga.h"
 
-// Global variables definitions
 double lb[NV];
 double ub[NV];
 double crossover_prob = 0.6;
@@ -8,7 +7,6 @@ double mutation_prob = 0.05;
 int rate_local_search = 30;
 double step_size = 0.02;
 
-// Initialize variable bounds
 void initialize_bounds() {
     for (int i = 0; i < NV; i++) {
         lb[i] = 0.0;
@@ -16,7 +14,6 @@ void initialize_bounds() {
     }
 }
 
-// Utility functions
 double rand01() {
     return (double)rand() / RAND_MAX;
 }
@@ -25,7 +22,6 @@ double rand_range(double min, double max) {
     return min + (max - min) * rand01();
 }
 
-// Initialize a random population
 void random_population(Population *pop) {
     for (int i = 0; i < POP_SIZE; i++) {
         for (int j = 0; j < NV; j++) {
@@ -35,12 +31,9 @@ void random_population(Population *pop) {
     pop->size = POP_SIZE;
 }
 
-// Evaluate a solution using ZDT1 benchmark
 void evaluate(Solution *sol) {
-    // Objective 1
     double f1 = sol->x[0];
     
-    // Calculate g(x)
     double g = 1.0;
     double sum = 0.0;
     for (int i = 1; i < NV; i++) {
@@ -48,14 +41,12 @@ void evaluate(Solution *sol) {
     }
     g += 9.0 * sum / (NV - 1);
     
-    // Calculate h(f1,g)
     double h = 1.0 - sqrt(f1 / g);
     
     sol->fitness[0] = f1;
     sol->fitness[1] = g * h;
 }
 
-// Crossover operator (single-point crossover)
 void crossover(Population *pop, Population *offspring) {
     offspring->size = 0;
     for (int i = 0; i < pop->size / 2; i++) {
@@ -68,7 +59,6 @@ void crossover(Population *pop, Population *offspring) {
             
             int cutting_point = rand() % (NV - 1) + 1;
             
-            // Create two children
             for (int j = 0; j < NV; j++) {
                 if (j < cutting_point) {
                     offspring->solutions[offspring->size].x[j] = pop->solutions[r1].x[j];
@@ -87,7 +77,6 @@ void crossover(Population *pop, Population *offspring) {
     }
 }
 
-// Mutation operator (single-point mutation)
 void mutation(Population *pop, Population *offspring) {
     offspring->size = 0;
     for (int i = 0; i < pop->size; i++) {
@@ -102,7 +91,6 @@ void mutation(Population *pop, Population *offspring) {
     }
 }
 
-// Local search operator
 void local_search(Population *pop, Population *offspring) {
     offspring->size = rate_local_search;
     for (int i = 0; i < rate_local_search; i++) {
@@ -111,7 +99,6 @@ void local_search(Population *pop, Population *offspring) {
         int r2 = rand() % NV;
         offspring->solutions[i].x[r2] += rand_range(-step_size, step_size);
         
-        // Ensure bounds
         if (offspring->solutions[i].x[r2] < lb[r2]) 
             offspring->solutions[i].x[r2] = lb[r2];
         if (offspring->solutions[i].x[r2] > ub[r2]) 
@@ -121,7 +108,6 @@ void local_search(Population *pop, Population *offspring) {
     }
 }
 
-// Dominance check
 bool dominates(Solution *sol1, Solution *sol2) {
     bool better = false;
     for (int i = 0; i < 2; i++) {
@@ -135,7 +121,6 @@ bool dominates(Solution *sol1, Solution *sol2) {
     return better;
 }
 
-// Find non-dominated solutions (Pareto front)
 void find_pareto_front(Solution *solutions, int size, int *front_indices, int *front_size) {
     *front_size = 0;
     for (int i = 0; i < size; i++) {
@@ -153,7 +138,6 @@ void find_pareto_front(Solution *solutions, int size, int *front_indices, int *f
     }
 }
 
-// Calculate crowding distance
 void crowding_distance(Solution *front, int front_size, double *distances) {
     if (front_size == 0) return;
     
@@ -165,7 +149,6 @@ void crowding_distance(Solution *front, int front_size, double *distances) {
         int *indices = malloc(front_size * sizeof(int));
         for (int i = 0; i < front_size; i++) indices[i] = i;
         
-        // Sort indices based on current objective
         for (int i = 0; i < front_size - 1; i++) {
             for (int j = i + 1; j < front_size; j++) {
                 if (front[indices[i]].fitness[obj] > front[indices[j]].fitness[obj]) {
@@ -194,7 +177,6 @@ void crowding_distance(Solution *front, int front_size, double *distances) {
     }
 }
 
-// Select solutions using crowding distance
 void select_by_crowding(Solution *solutions, int size, int num_to_select, Solution *selected) {
     double *distances = malloc(size * sizeof(double));
     crowding_distance(solutions, size, distances);
@@ -212,7 +194,6 @@ void select_by_crowding(Solution *solutions, int size, int num_to_select, Soluti
     free(distances);
 }
 
-// Selection operator
 void selection(Population *pop, Population *selected) {
     int remaining_indices[pop->size];
     int remaining_size = pop->size;
@@ -262,7 +243,6 @@ void selection(Population *pop, Population *selected) {
     }
 }
 
-// Save results to CSV file
 void save_results(Population *pop, const char *filename) {
     FILE *f = fopen(filename, "w");
     if (f == NULL) {

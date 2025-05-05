@@ -8,30 +8,26 @@
 #include <stdbool.h>
 #include <float.h>
 
-#define NV 1          // Number of variables
-#define POP_SIZE 100  // Population size
-#define MAX_ITER 200  // Maximum iterations
-#define MAX_ARCHIVE 300 // Maximum archive size
+#define NV 1          
+#define POP_SIZE 100  
+#define MAX_ITER 200 
+#define MAX_ARCHIVE 300 
 
-// Structure for a solution
 typedef struct {
-    double x[NV];      // Decision variables
-    double fitness[2]; // Fitness values (2 objectives)
+    double x[NV];      
+    double fitness[2]; 
 } Solution;
 
-// Structure for population
 typedef struct {
-    Solution solutions[POP_SIZE * 3]; // Population with extra space for offspring
+    Solution solutions[POP_SIZE * 3];
     int size;
 } Population;
 
-// Structure for archive
 typedef struct {
     Solution solutions[MAX_ARCHIVE];
     int size;
 } Archive;
 
-// Global variables (extern declarations)
 extern double lb[NV];
 extern double ub[NV];
 extern double crossover_prob;
@@ -39,7 +35,6 @@ extern double mutation_prob;
 extern int rate_local_search;
 extern double step_size;
 
-// Function declarations
 double rand01();
 double rand_range(double min, double max);
 void random_population(Population *pop);
@@ -55,4 +50,4 @@ void selection(Population *pop, Population *selected);
 void update_archive(Population *pop, Archive *archive);
 void save_results(Population *pop, Archive *archive, const char *filename);
 
-#endif // GA_H
+#endif 

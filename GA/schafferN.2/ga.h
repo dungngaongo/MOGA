@@ -8,19 +8,19 @@
 #include <stdbool.h>
 #include <float.h>
 
-#define NV 1           // Number of variables
-#define POP_SIZE 100   // Population size
-#define MAX_ITER 200   // Maximum iterations
-#define MAX_ARCHIVE 150 // Maximum archive size
+#define NV 1           
+#define POP_SIZE 100   
+#define MAX_ITER 200  
+#define MAX_ARCHIVE 150 
 #define PI 3.141592653589793
 
 typedef struct {
-    double x[NV];       // Decision variables
-    double fitness[2];  // Fitness values (2 objectives)
+    double x[NV];      
+    double fitness[2];  
 } Solution;
 
 typedef struct {
-    Solution solutions[POP_SIZE * 3]; // Population with extra space for offspring
+    Solution solutions[POP_SIZE * 3]; 
     int size;
 } Population;
 
@@ -29,7 +29,6 @@ typedef struct {
     int size;
 } Archive;
 
-// Global variables (extern declarations)
 extern double lb[NV];
 extern double ub[NV];
 extern double crossover_prob;
@@ -37,11 +36,9 @@ extern double mutation_prob;
 extern int rate_local_search;
 extern double step_size;
 
-// Utility functions
 double rand01();
 double rand_range(double min, double max);
 
-// Core NSGA-II functions
 void random_population(Population *pop);
 void evaluate(Solution *sol);
 void crossover(Population *pop, Population *offspring);
@@ -55,4 +52,4 @@ void selection(Population *pop, Population *selected);
 void update_archive(Population *pop, Archive *archive);
 void save_results(Population *pop, Archive *archive, const char *filename);
 
-#endif //GA_H
+#endif

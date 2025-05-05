@@ -34,14 +34,12 @@ int main() {
             combined.solutions[combined.size++] = offspring_ls.solutions[i];
         }
         
-        // Selection
         selection(&combined, &selected);
         pop = selected;
         
         printf("Iteration %d\n", iter);
     }
     
-    // Extract Pareto front from final population
     int front_indices[pop.size];
     int front_size;
     find_pareto_front(pop.solutions, pop.size, front_indices, &front_size);
@@ -52,10 +50,8 @@ int main() {
     }
     pareto_front.size = front_size;
     
-    // Save results to file
     save_results(&pareto_front, "nsga2_results.csv");
     
-    // Display final results
     printf("\nOptimization Complete\n");
     printf("--------------------\n");
     printf("Variables: %d\n", NV);

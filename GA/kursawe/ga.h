@@ -9,22 +9,21 @@
 #include <float.h>
 #include <string.h>
 
-#define NV 3           // Number of variables
-#define POP_SIZE 100   // Population size
-#define MAX_ITER 200   // Maximum iterations
+#define NV 3           
+#define POP_SIZE 100   
+#define MAX_ITER 200  
 #define PI 3.141592653589793
 
 typedef struct {
-    double x[NV];       // Decision variables
-    double fitness[2];  // Fitness values (2 objectives)
+    double x[NV];       
+    double fitness[2];  
 } Solution;
 
 typedef struct {
-    Solution solutions[POP_SIZE * 3]; // Population with extra space for offspring
+    Solution solutions[POP_SIZE * 3];
     int size;
 } Population;
 
-// Global variables (extern declarations)
 extern double lb[NV];
 extern double ub[NV];
 extern double crossover_prob;
@@ -49,4 +48,4 @@ void select_by_crowding(Solution *solutions, int size, int num_to_select, Soluti
 void selection(Population *pop, Population *selected);
 void save_results(Population *pop, const char *filename);
 
-#endif // GA_H
+#endif 

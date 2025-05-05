@@ -34,20 +34,16 @@ int main() {
             combined.solutions[combined.size++] = offspring_ls.solutions[i];
         }
         
-        // Selection
         selection(&combined, &selected);
         pop = selected;
         
-        // Update archive
         update_archive(&pop, &archive);
         
         printf("Iteration %d\n", iter);
     }
     
-    // Save results to file
     save_results(&pop, &archive, "nsga2_results.csv");
     
-    // Final results
     printf("_________________\n");
     printf("Optimal solutions (x):\n");
     for (int i = 0; i < pop.size; i++) {

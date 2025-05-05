@@ -33,7 +33,6 @@ int main() {
             combined.solutions[combined.size++] = offspring_ls.solutions[i];
         }
         
-        // Selection
         selection(&combined, &selected);
         pop = selected;
         
@@ -51,10 +50,8 @@ int main() {
     }
     pareto_front.size = front_size;
     
-    // Save results to file
     save_results(&pareto_front, "nsga2_results.csv");
     
-    // Display final results
     printf("\nFinal Pareto Front Solutions:\n");
     printf("---------------------------\n");
     printf("     x1           x2           x3           f1           f2\n");
