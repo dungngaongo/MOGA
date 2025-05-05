@@ -1,26 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <stdbool.h>
-#include <float.h>
-#include <string.h>
+#include "ga.h"
 
-#define NV 2           // Number of variables
-#define POP_SIZE 100   // Population size
-#define MAX_ITER 200   // Maximum iterations
-
-typedef struct {
-    double x[NV];       // Decision variables
-    double fitness[2];  // Fitness values (2 objectives)
-} Solution;
-
-typedef struct {
-    Solution solutions[POP_SIZE * 3]; // Population with extra space for offspring
-    int size;
-} Population;
-
-// Global variables
+// Global variables definitions
 double lb[NV] = {-4.0, -4.0};
 double ub[NV] = {4.0, 4.0};
 double crossover_prob = 0.6;
@@ -37,6 +17,7 @@ double rand_range(double min, double max) {
     return min + (max - min) * rand01();
 }
 
+// Initialize a random population
 void random_population(Population *pop) {
     for (int i = 0; i < POP_SIZE; i++) {
         for (int j = 0; j < NV; j++) {
@@ -46,6 +27,7 @@ void random_population(Population *pop) {
     pop->size = POP_SIZE;
 }
 
+// Evaluate a solution
 void evaluate(Solution *sol) {
     double sum1 = 0.0, sum2 = 0.0;
     const double inv_sqrt_n = 1.0/sqrt(NV);
@@ -63,6 +45,7 @@ void evaluate(Solution *sol) {
     sol->fitness[1] = 1 - exp(-sum2);
 }
 
+// Crossover operator (single-point crossover)
 void crossover(Population *pop, Population *offspring) {
     offspring->size = 0;
     for (int i = 0; i < pop->size / 2; i++) {
@@ -94,19 +77,22 @@ void crossover(Population *pop, Population *offspring) {
     }
 }
 
+// Mutation operator (single-point mutation)
 void mutation(Population *pop, Population *offspring) {
     offspring->size = 0;
     for (int i = 0; i < pop->size; i++) {
         if (rand01() < mutation_prob) {
             offspring->solutions[offspring->size] = pop->solutions[i];
             int mutation_point = rand() % NV;
-            offspring->solutions[offspring->size].x[mutation_point] = rand_range(lb[mutation_point], ub[mutation_point]);
+            offspring->solutions[offspring->size].x[mutation_point] = 
+                rand_range(lb[mutation_point], ub[mutation_point]);
             evaluate(&offspring->solutions[offspring->size]);
             offspring->size++;
         }
     }
 }
 
+// Local search operator
 void local_search(Population *pop, Population *offspring) {
     offspring->size = rate_local_search;
     for (int i = 0; i < rate_local_search; i++) {
@@ -125,6 +111,7 @@ void local_search(Population *pop, Population *offspring) {
     }
 }
 
+// Dominance check
 bool dominates(Solution *sol1, Solution *sol2) {
     bool better = false;
     for (int i = 0; i < 2; i++) {
@@ -138,6 +125,7 @@ bool dominates(Solution *sol1, Solution *sol2) {
     return better;
 }
 
+// Find non-dominated solutions (Pareto front)
 void find_pareto_front(Solution *solutions, int size, int *front_indices, int *front_size) {
     *front_size = 0;
     for (int i = 0; i < size; i++) {
@@ -155,6 +143,7 @@ void find_pareto_front(Solution *solutions, int size, int *front_indices, int *f
     }
 }
 
+// Calculate crowding distance
 void crowding_distance(Solution *front, int front_size, double *distances) {
     if (front_size == 0) return;
     
@@ -195,6 +184,7 @@ void crowding_distance(Solution *front, int front_size, double *distances) {
     }
 }
 
+// Select solutions using crowding distance
 void select_by_crowding(Solution *solutions, int size, int num_to_select, Solution *selected) {
     double *distances = malloc(size * sizeof(double));
     crowding_distance(solutions, size, distances);
@@ -212,6 +202,7 @@ void select_by_crowding(Solution *solutions, int size, int num_to_select, Soluti
     free(distances);
 }
 
+// Selection operator
 void selection(Population *pop, Population *selected) {
     int remaining_indices[pop->size];
     int remaining_size = pop->size;
@@ -261,6 +252,7 @@ void selection(Population *pop, Population *selected) {
     }
 }
 
+// Save results to CSV file
 void save_results(Population *pop, const char *filename) {
     FILE *f = fopen(filename, "w");
     if (f == NULL) {
@@ -279,82 +271,4 @@ void save_results(Population *pop, const char *filename) {
     }
     
     fclose(f);
-}
-
-int main() {
-    srand(time(NULL));
-    
-    Population pop, offspring_cross, offspring_mut, offspring_ls, combined, selected;
-    
-    // Initialize population
-    random_population(&pop);
-    for (int i = 0; i < pop.size; i++) {
-        evaluate(&pop.solutions[i]);
-    }
-    
-    // Main loop
-    for (int iter = 0; iter < MAX_ITER; iter++) {
-        // Generate offspring
-        crossover(&pop, &offspring_cross);
-        mutation(&pop, &offspring_mut);
-        local_search(&pop, &offspring_ls);
-        
-        // Combine populations
-        combined.size = 0;
-        for (int i = 0; i < pop.size; i++) {
-            combined.solutions[combined.size++] = pop.solutions[i];
-        }
-        for (int i = 0; i < offspring_cross.size; i++) {
-            combined.solutions[combined.size++] = offspring_cross.solutions[i];
-        }
-        for (int i = 0; i < offspring_mut.size; i++) {
-            combined.solutions[combined.size++] = offspring_mut.solutions[i];
-        }
-        for (int i = 0; i < offspring_ls.size; i++) {
-            combined.solutions[combined.size++] = offspring_ls.solutions[i];
-        }
-        
-        // Selection
-        selection(&combined, &selected);
-        pop = selected;
-        
-        printf("Iteration %d\n", iter);
-    }
-    
-    // Find final Pareto front
-    int front_indices[pop.size];
-    int front_size;
-    find_pareto_front(pop.solutions, pop.size, front_indices, &front_size);
-    
-    Population pareto_front = {0};
-    for (int i = 0; i < front_size; i++) {
-        pareto_front.solutions[i] = pop.solutions[front_indices[i]];
-    }
-    pareto_front.size = front_size;
-    
-    // Save results to file
-    save_results(&pareto_front, "nsga2_results.csv");
-    
-    // Final results
-    printf("_________________\n");
-    printf("Optimal solutions:\n");
-    printf("     x1           x2\n");
-    for (int i = 0; i < pareto_front.size; i++) {
-        printf("%f  %f\n", 
-               pareto_front.solutions[i].x[0],
-               pareto_front.solutions[i].x[1]);
-    }
-    printf("______________\n");
-    printf("Fitness values:\n");
-    printf("objective 1  objective 2\n");
-    printf("      |          |\n");
-    for (int i = 0; i < pareto_front.size; i++) {
-        printf("%f  %f\n", 
-               pareto_front.solutions[i].fitness[0],
-               pareto_front.solutions[i].fitness[1]);
-    }
-    
-    printf("Results saved to nsga2_results.csv\n");
-    
-    return 0;
 }
