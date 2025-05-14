@@ -24,8 +24,8 @@ plt.ylabel('Objective 2 (f2)')
 plt.title('NSGA-II Pareto Front')
 plt.legend()
 plt.grid(True)
-plt.xlim(0, 4)     
-plt.ylim(0, 4)
+plt.xlim(-1, 1)     
+plt.ylim(0, 20)
 plt.show()
 
 # In thông tin về dữ liệu
