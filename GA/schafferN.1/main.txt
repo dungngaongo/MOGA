@@ -2,6 +2,7 @@ int main(void) {
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
+    MX_USART1_UART_Init();
 
     // Code MOGA here
     Population pop, offspring_cross, offspring_mut, offspring_ls, combined, selected;
@@ -52,7 +53,7 @@ int main(void) {
         }
     }
 
-    send_archive(&huart2, &archive);
+    send_archive(&huart1, &archive);
 
     while (1) {
         HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_13); // hoặc pin LED nào đó
