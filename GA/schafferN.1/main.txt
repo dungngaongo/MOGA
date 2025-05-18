@@ -1,17 +1,3 @@
-void send_archive(UART_HandleTypeDef *huart, Archive *archive) {
-    char buf[128];
-    snprintf(buf, sizeof(buf), "=== Archive Results ===\r\n");
-    HAL_UART_Transmit(huart, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
-    
-    for (int i = 0; i < archive->size; i++) {
-        snprintf(buf, sizeof(buf), "x=%f, f1=%f, f2=%f\r\n",
-                archive->solutions[i].x[0],
-                archive->solutions[i].fitness[0],
-                archive->solutions[i].fitness[1]);
-        HAL_UART_Transmit(huart, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
-    }
-}
-
 int main(void) {
     HAL_Init();
     SystemClock_Config();
