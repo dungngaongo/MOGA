@@ -1,11 +1,16 @@
 #include "ga.h"
 
+#define VOLTAGE 5.0f      
+#define CURRENT 0.5f
+
 // Main function
 int main() {
     srand(time(NULL));
     
     Population pop, offspring_cross, offspring_mut, offspring_ls, combined, selected;
     Archive archive = {0};
+
+    clock_t start = clock();
     
     // Initialize population
     random_population(&pop);
@@ -43,6 +48,11 @@ int main() {
         printf("Iteration %d\n", iter);
     }
 
+    clock_t end = clock();
+    double elapsed_sec = (double)(end - start) / CLOCKS_PER_SEC;
+
+    double energy_joules = VOLTAGE * CURRENT * elapsed_sec;
+
     save_results(&pop, &archive, "nsga2_results.csv");
     
     printf("_________________\n");
@@ -58,6 +68,8 @@ int main() {
     }
     
     printf("Total points in archive: %d\n", archive.size);
+    printf("Execution time: %.3f seconds\n", elapsed_sec);
+    printf("Estimated energy consumed: %.4f J\n", energy_joules);
     
     return 0;
 }
