@@ -26,10 +26,11 @@ void random_population(Population *pop) {
 
 void evaluate(Solution *sol) {
     double sum1 = 0.0;
-    for (int j = 0; j < NV - 1; j++) {
-        sum1 += pow(sol->x[j], 2) + pow(sol->x[j+1], 2);
+    for (int i = 0; i < NV - 1; i++) {
+        double term = sqrt(pow(sol->x[i], 2) + pow(sol->x[i+1], 2));
+        sum1 += -10.0 * exp(-0.2 * term);
     }
-    sol->fitness[0] = -10 * exp(-0.2 * sqrt(sum1 / (NV-1)));
+    sol->fitness[0] = sum1;
     
     double sum = 0.0;
     for (int j = 0; j < NV; j++) {
@@ -241,10 +242,10 @@ void save_results(Population *pop, const char *filename) {
         return;
     }
     
-    fprintf(f, "x1,x2,x3,f1,f2\n");
+    fprintf(f, "type,x1,x2,x3,f1,f2\n");
     
     for (int i = 0; i < pop->size; i++) {
-        fprintf(f, "%f,%f,%f,%f,%f\n", 
+        fprintf(f, "final,%f,%f,%f,%f,%f\n", 
                 pop->solutions[i].x[0],
                 pop->solutions[i].x[1],
                 pop->solutions[i].x[2],
