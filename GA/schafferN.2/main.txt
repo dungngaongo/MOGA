@@ -10,25 +10,28 @@ int main(void) {
     SystemClock_Config();
     MX_GPIO_Init();
     MX_USART1_UART_Init();
-
-    // Code MOGA here
+    
     Population pop, offspring_cross, offspring_mut, offspring_ls, combined, selected;
     Archive archive = {0};
 
-    srand(HAL_GetTick()); // STM32 không có time(NULL)
-
+    srand(HAL_GetTick());
+    
+    // Initialize population
     random_population(&pop);
     for (int i = 0; i < pop.size; i++) {
         evaluate(&pop.solutions[i]);
     }
 
     uint32_t start_time = HAL_GetTick();
-
+    
+    // Main loop
     for (int iter = 0; iter < MAX_ITER; iter++) {
+        // Generate offspring
         crossover(&pop, &offspring_cross);
         mutation(&pop, &offspring_mut);
         local_search(&pop, &offspring_ls);
-
+        
+        // Combine populations
         combined.size = 0;
         for (int i = 0; i < pop.size; i++) {
             combined.solutions[combined.size++] = pop.solutions[i];
@@ -42,7 +45,7 @@ int main(void) {
         for (int i = 0; i < offspring_ls.size; i++) {
             combined.solutions[combined.size++] = offspring_ls.solutions[i];
         }
-
+        
         selection(&combined, &selected);
         pop = selected;
         update_archive(&pop, &archive);
@@ -53,7 +56,7 @@ int main(void) {
 
     float time_sec = elapsed_ms / 1000.0f;
     float energy_joules = VOLTAGE * CURRENT * time_sec;
-
+    
     send_archive(&huart1, &archive);
 
     char msg[128];
