@@ -1,9 +1,14 @@
 #include "ga.h"
 
+#define VOLTAGE 5.0f      
+#define CURRENT 0.5f
+
 int main() {
     srand(time(NULL));
     
     Population pop, offspring_cross, offspring_mut, offspring_ls, combined, selected;
+
+    clock_t start = clock();
     
     // Initialize population
     random_population(&pop);
@@ -39,6 +44,11 @@ int main() {
         
         printf("Iteration %d\n", iter);
     }
+
+    clock_t end = clock();
+    double elapsed_sec = (double)(end - start) / CLOCKS_PER_SEC;
+
+    double energy_joules = VOLTAGE * CURRENT * elapsed_sec;
     
     // Extract Pareto front from final population
     int front_indices[pop.size];
@@ -65,6 +75,8 @@ int main() {
     }
     
     printf("\nResults saved to nsga2_results.csv\n");
+    printf("Execution time: %.3f seconds\n", elapsed_sec);
+    printf("Estimated energy consumed: %.4f J\n", energy_joules);
     
     return 0;
 }

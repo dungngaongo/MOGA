@@ -1,21 +1,29 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Đọc dữ liệu từ file CSV (kết quả đầu ra của chương trình C)
-data = pd.read_csv("nsga2_results.csv")
+# Đọc dữ liệu từ file CSV
+data = pd.read_csv('nsga2_results.csv')
 
-# Trích xuất các cột f1 và f2
-f1 = data['f1']
-f2 = data['f2']
+# Tách dữ liệu thành final solutions và archive solutions
+final_solutions = data[data['type'] == 'final']
 
-# Vẽ biểu đồ Pareto
-plt.figure(figsize=(6, 6))
-plt.plot(f1, f2, 'rs', markersize=4, linewidth=2)  # red squares
-plt.xlabel('f1(x)')
-plt.ylabel('f2(x)')
-plt.grid(True)
-plt.title('Pareto Front')
-plt.xlim(0, 1)
+# Vẽ đồ thị
+plt.figure(figsize=(10, 6))
+
+# Vẽ final solutions
+plt.scatter(final_solutions['f1'], final_solutions['f2'], 
+            c='blue', marker='o', label='Final Solutions', alpha=0.7)
+
+plt.xlabel('Objective 1 (f1)')
+plt.ylabel('Objective 2 (f2)')
+plt.title('NSGA-II Pareto Front')
+plt.legend()
+plt.grid(True)  
+plt.xlim(0, 1)     
 plt.ylim(0, 1)
-plt.gca().set_aspect('equal', adjustable='box')
 plt.show()
+
+# In thông tin về dữ liệu
+print("Final solutions count:", len(final_solutions))
+print("\nFirst few final solutions:")
+print(final_solutions.head())

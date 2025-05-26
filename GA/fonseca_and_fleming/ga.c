@@ -242,10 +242,10 @@ void save_results(Population *pop, const char *filename) {
         return;
     }
     
-    fprintf(f, "x1,x2,f1,f2\n");
+    fprintf(f, "type,x1,x2,f1,f2\n");
     
     for (int i = 0; i < pop->size; i++) {
-        fprintf(f, "%f,%f,%f,%f\n", 
+        fprintf(f, "final,%f,%f,%f,%f\n", 
                 pop->solutions[i].x[0],
                 pop->solutions[i].x[1],
                 pop->solutions[i].fitness[0],
