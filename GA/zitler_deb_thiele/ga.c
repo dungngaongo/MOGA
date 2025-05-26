@@ -41,7 +41,8 @@ void evaluate(Solution *sol) {
     }
     g += 9.0 * sum / (NV - 1);
     
-    double h = 1.0 - sqrt(f1 / g);
+    double ratio = f1 / g;
+    double h = 1.0 - sqrt(ratio) - ratio * sin(10.0 * PI * f1);
     
     sol->fitness[0] = f1;
     sol->fitness[1] = g * h;
@@ -250,10 +251,10 @@ void save_results(Population *pop, const char *filename) {
         return;
     }
     
-    fprintf(f, "f1,f2\n");
+    fprintf(f, "type,f1,f2\n");
     
     for (int i = 0; i < pop->size; i++) {
-        fprintf(f, "%f,%f\n", 
+        fprintf(f, "final,%f,%f\n", 
                 pop->solutions[i].fitness[0],
                 pop->solutions[i].fitness[1]);
     }
