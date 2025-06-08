@@ -10,8 +10,8 @@
 #include <string.h>
 
 #define NV 30           
-#define POP_SIZE 200   
-#define MAX_ITER 300   
+#define POP_SIZE 100   
+#define MAX_ITER 200   
 #define PI 3.141592653589793
 
 typedef struct {
